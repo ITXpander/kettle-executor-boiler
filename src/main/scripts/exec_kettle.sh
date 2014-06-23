@@ -1,3 +1,5 @@
+#!/bin/sh
+
 JAVA_OPTS="-Xms128m -Xmx512m"
 BASEDIR=`dirname $0`
 

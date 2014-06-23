@@ -2,10 +2,11 @@ package org.itfactory.kettle;
 
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.exception.KettleException;
-import org.pentaho.di.core.exception.KettleXMLException;
-import org.pentaho.di.core.logging.CentralLogStore;
+import org.pentaho.di.core.logging.KettleLogStore;
 import org.pentaho.di.core.logging.LogLevel;
 import org.pentaho.di.core.logging.LoggingRegistry;
+import org.pentaho.di.job.Job;
+import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.repository.Repository;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
@@ -30,7 +31,7 @@ public enum KettleExecutor {
         }
     }
 
-    public int executeTransformation(String transPath) {
+    public int executeTransformation(String transPath, LogLevel logLevel) {
         int errors = 0;
 
         try {
@@ -38,7 +39,7 @@ public enum KettleExecutor {
             TransMeta transMeta = new TransMeta(transPath, (Repository) null);
 
             Trans trans = new Trans(transMeta);
-            trans.setLogLevel(LogLevel.NOTHING);
+            trans.setLogLevel(logLevel);
             trans.setContainerObjectId(UUID.randomUUID().toString());
             trans.prepareExecution(null);
 
@@ -48,13 +49,40 @@ public enum KettleExecutor {
 
             // Remove the logging records
             String logChannelId = trans.getLogChannelId();
-            CentralLogStore.discardLines(logChannelId, false);
-            CentralLogStore.discardLines(transMeta.getLogChannelId(), false);
+            KettleLogStore.discardLines(logChannelId, false);
+            KettleLogStore.discardLines(transMeta.getLogChannelId(), false);
             LoggingRegistry.getInstance().removeIncludingChildren(logChannelId);
 
             errors = trans.getErrors();
-        } catch (KettleXMLException e) {
+        } catch (KettleException e) {
             e.printStackTrace();
+        }
+
+        return errors;
+    }
+
+    public int executeJob(String jobPath, LogLevel logLevel) {
+        int errors = 0;
+
+        try {
+            // Initialize the transformation
+            JobMeta jobMeta = new JobMeta(jobPath, null);
+
+            Job job = new Job(null, jobMeta);
+            job.setLogLevel(logLevel);
+            job.setContainerObjectId(UUID.randomUUID().toString());
+
+            // start and wait until it finishes
+            job.start();
+            job.waitUntilFinished();
+
+            // Remove the logging records
+            String logChannelId = job.getLogChannelId();
+            KettleLogStore.discardLines(logChannelId, false);
+            KettleLogStore.discardLines(jobMeta.getLogChannelId(), false);
+            LoggingRegistry.getInstance().removeIncludingChildren(logChannelId);
+
+            errors = job.getErrors();
         } catch (KettleException e) {
             e.printStackTrace();
         }

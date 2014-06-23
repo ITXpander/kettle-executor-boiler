@@ -42,17 +42,12 @@
         <dependency>
             <groupId>pentaho-kettle</groupId>
             <artifactId>kettle-core</artifactId>
-            <version>4.4.2-GA</version>
+            <version>5.0.7</version>
         </dependency>
         <dependency>
             <groupId>pentaho-kettle</groupId>
             <artifactId>kettle-engine</artifactId>
-            <version>4.4.2-GA</version>
-        </dependency>
-        <dependency>
-            <groupId>pentaho-kettle</groupId>
-            <artifactId>kettle-db</artifactId>
-            <version>4.4.2-GA</version>
+            <version>5.0.7</version>
         </dependency>
         <dependency>
             <groupId>commons-vfs</groupId>
@@ -76,7 +71,7 @@
     <repositories>
         <repository>
             <id>pentaho</id>
-            <url>http://repository.pentaho.org/artifactory/pentaho</url>
+            <url>http://repository.pentaho.org/artifactory/repo</url>
         </repository>
     </repositories>
 </project>

@@ -1,6 +1,7 @@
 package org.itfactory.kettle;
 
 import org.apache.log4j.Logger;
+import org.pentaho.di.core.logging.LogLevel;
 
 import java.util.concurrent.Callable;
 
@@ -15,13 +16,16 @@ public class KettleCallableExecutor implements Callable<Integer> {
     private static Logger logger = Logger.getLogger(KettleCallableExecutor.class);
 
     private String transPath;
+    private LogLevel logLevel;
 
-    public KettleCallableExecutor(String transPath) {
+    public KettleCallableExecutor(String transPath, LogLevel logLevel) {
+
         this.transPath = transPath;
+        this.logLevel = logLevel;
     }
 
     @Override
     public Integer call() throws Exception {
-        return KettleExecutor.INSTANCE.executeTransformation(this.transPath);
+        return KettleExecutor.INSTANCE.executeTransformation(this.transPath, this.logLevel);
     }
 }
