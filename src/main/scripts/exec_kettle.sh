@@ -1,7 +1,8 @@
+#!/bin/sh
 JAVA_OPTS="-Xms128m -Xmx512m"
 BASEDIR=`dirname $0`
 
-EXEC_JAR=$BASEDIR/kettle-executor-boiler-1.0-SNAPSHOT.jar
+EXEC_JAR=$BASEDIR/kettle-executor-boiler-1.0.jar
 EXEC_CLASSNAME=org.itfactory.kettle.App
 EXEC_CLASSPATH=$EXEC_JAR
 

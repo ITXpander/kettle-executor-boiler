@@ -27,9 +27,9 @@ public class KettleCallableExecutor implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        if(this.path.endsWith(KETTLE_JOB_SUFFIX)) {
+        if(this.path.endsWith(KETTLE_TRANS_SUFFIX)) {
             return KettleExecutor.INSTANCE.executeTransformation(this.path, this.logLevel);
-        } else if(this.path.endsWith(KETTLE_TRANS_SUFFIX)) {
+        } else if(this.path.endsWith(KETTLE_JOB_SUFFIX)) {
             return KettleExecutor.INSTANCE.executeJob(this.path, this.logLevel);
         } else {
             return -1;
