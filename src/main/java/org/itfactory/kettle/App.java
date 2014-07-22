@@ -2,6 +2,7 @@ package org.itfactory.kettle;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.pentaho.di.core.logging.LogLevel;
 import sun.rmi.runtime.Log;
 
 import java.util.concurrent.ExecutorService;
@@ -14,27 +15,29 @@ import java.util.concurrent.Executors;
 public class App 
 {
     private static Logger logger = Logger.getLogger(App.class);
-    private static String TRANS_PATH = "/Users/puls3/Desktop/test_row_gen.ktr";
-    private static int POOL_SIZE = 10;
+    private static String DEFAULT_TRANS_PATH = "/Users/puls3/Desktop/test_row_gen.ktr";
+    private static int DEFAULT_POOL_SIZE = 1;
+    private static int DEFAULT_THREAD_NUM = 1;
 
     public static void main( String[] args )
     {
-        int threadPoolSize = Integer.parseInt(args[0]);
-        int threadNum = Integer.parseInt(args[1]);
+        String path = DEFAULT_TRANS_PATH;
+        int threadPoolSize = DEFAULT_POOL_SIZE;
+        int threadNum = DEFAULT_THREAD_NUM;
 
-        // Set up a simple configuration that logs on the console.
-        BasicConfigurator.configure();
+        if(args.length > 0) {
+            path = args[0];
+            threadPoolSize = Integer.parseInt(args[1]);
+            threadNum = Integer.parseInt(args[2]);
+        }
 
         ExecutorService pool = Executors.newFixedThreadPool(threadPoolSize);
-        KettleCallableExecutor kce = new KettleCallableExecutor(TRANS_PATH);
-
-        logger.info("Starting execution...");
+        KettleCallableExecutor kce = new KettleCallableExecutor(path, LogLevel.BASIC);
 
         for(int i =0; i< threadNum;i++) {
             pool.submit(kce);
         }
 
         pool.shutdown();
-        logger.info("Stopping execution...");
     }
 }
