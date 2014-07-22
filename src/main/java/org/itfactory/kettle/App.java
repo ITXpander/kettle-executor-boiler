@@ -16,12 +16,14 @@ public class App
 {
     private static Logger logger = Logger.getLogger(App.class);
     private static String DEFAULT_TRANS_PATH = "/Users/puls3/Desktop/test_row_gen.ktr";
+    private static String DEFAULT_LOG_LEVEL = "Error";
     private static int DEFAULT_POOL_SIZE = 1;
     private static int DEFAULT_THREAD_NUM = 1;
 
     public static void main( String[] args )
     {
         String path = DEFAULT_TRANS_PATH;
+        String logLevel = DEFAULT_LOG_LEVEL;
         int threadPoolSize = DEFAULT_POOL_SIZE;
         int threadNum = DEFAULT_THREAD_NUM;
 
@@ -29,10 +31,11 @@ public class App
             path = args[0];
             threadPoolSize = Integer.parseInt(args[1]);
             threadNum = Integer.parseInt(args[2]);
+            logLevel = args[3];
         }
 
         ExecutorService pool = Executors.newFixedThreadPool(threadPoolSize);
-        KettleCallableExecutor kce = new KettleCallableExecutor(path, LogLevel.BASIC);
+        KettleCallableExecutor kce = new KettleCallableExecutor(path, LogLevel.getLogLevelForCode(logLevel));
 
         for(int i =0; i< threadNum;i++) {
             pool.submit(kce);

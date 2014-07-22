@@ -4,7 +4,7 @@ BASEDIR=`dirname $0`
 
 EXEC_JAR=$BASEDIR/kettle-executor-boiler-1.0.jar
 EXEC_CLASSNAME=org.itfactory.kettle.App
-EXEC_CLASSPATH=$EXEC_JAR
+EXEC_CLASSPATH=conf/*:$EXEC_JAR
 
 # Add PDI extra JARs to classpath
 for f in `find $BASEDIR/lib -type f -name "*.jar"`
