@@ -50,6 +50,11 @@
             <version>5.0.7</version>
         </dependency>
         <dependency>
+            <groupId>pentaho-kettle</groupId>
+            <artifactId>kettle5-log4j-plugin</artifactId>
+            <version>5.0.7</version>
+        </dependency>
+        <dependency>
             <groupId>commons-vfs</groupId>
             <artifactId>commons-vfs</artifactId>
             <version>20100924-pentaho</version>

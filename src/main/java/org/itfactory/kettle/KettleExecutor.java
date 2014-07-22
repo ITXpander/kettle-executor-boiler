@@ -4,7 +4,9 @@ import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.logging.KettleLogStore;
 import org.pentaho.di.core.logging.LogLevel;
+import org.pentaho.di.core.logging.LoggingBuffer;
 import org.pentaho.di.core.logging.LoggingRegistry;
+import org.pentaho.di.core.logging.log4j.Log4jLogging;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.repository.Repository;
@@ -26,6 +28,8 @@ public enum KettleExecutor {
     KettleExecutor() {
         try {
             KettleEnvironment.init();
+            LoggingBuffer loggingBuffer = KettleLogStore.getAppender();
+            loggingBuffer.addLoggingEventListener(new Log4jLogging());
         } catch (KettleException e) {
             e.printStackTrace();
         }
