@@ -4,10 +4,7 @@ import org.apache.log4j.Logger;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleXMLException;
-import org.pentaho.di.core.logging.CentralLogStore;
-import org.pentaho.di.core.logging.LogLevel;
-import org.pentaho.di.core.logging.LogWriter;
-import org.pentaho.di.core.logging.LoggingRegistry;
+import org.pentaho.di.core.logging.*;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.repository.Repository;
@@ -26,6 +23,8 @@ import java.util.UUID;
 public enum KettleExecutor {
     INSTANCE;
 
+    private static Logger logger = Logger.getLogger(KettleExecutor.class);
+
     KettleExecutor() {
         try {
             KettleEnvironment.init();
@@ -39,8 +38,8 @@ public enum KettleExecutor {
         Trans trans = null;
 
         try {
-            Logger logger = Logger.getLogger(LogWriter.STRING_PENTAHO_DI_LOGGER_NAME);
-            LogWriter.getInstance().removeAppender(logger.getAppender(LogWriter.STRING_PENTAHO_DI_CONSOLE_APPENDER));
+            Logger kettleLogger = Logger.getLogger(LogWriter.STRING_PENTAHO_DI_LOGGER_NAME);
+            LogWriter.getInstance().removeAppender(kettleLogger.getAppender(LogWriter.STRING_PENTAHO_DI_CONSOLE_APPENDER));
 
             // Initialize the transformation
             TransMeta transMeta = new TransMeta(transPath, (Repository) null);
@@ -50,11 +49,18 @@ public enum KettleExecutor {
             trans.setContainerObjectId(UUID.randomUUID().toString());
             trans.prepareExecution(null);
 
+            logger.debug("starting transformation...");
             // start and wait until it finishes
             trans.startThreads();
             trans.waitUntilFinished();
 
+            // output log explicitly
+            Log4jBufferAppender appender = CentralLogStore.getAppender();
+            String logText = appender.getBuffer(trans.getLogChannelId(), false).toString();
+            logger.info(logText);
+
             // Remove the logging records
+            logger.debug("log housekeeping...");
             String logChannelId = trans.getLogChannelId();
             CentralLogStore.discardLines(logChannelId, false);
             CentralLogStore.discardLines(transMeta.getLogChannelId(), false);
